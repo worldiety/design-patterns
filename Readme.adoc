@@ -3,6 +3,7 @@ Torben Schinke
 v0.0.1, 2022-10-24
 :doctype: book
 :toc: 
+:toclevels: 4 
 
 == Einführung
 
@@ -56,12 +57,11 @@ Je nach Problemzerlegung, kann ein bestimmtes Muster Vor- und Nachteil haben.
 
 ==== Factory Method
 
-Beachte, dass Gamma et al. (siehe <<gof>> S.107) eine sehr spezifische Sicht auf eine Factory-Funktion haben. 
+Beachte, dass Gamma et al. (siehe <<gof>> S.107) eine sehr spezifische und eingeschränkte Sicht auf eine Factory-Funktion haben. 
 Diese ist insbesondere dadurch belastet, dass die Autoren dies immer vollständig einem Objekt zuordnen und zusätzlich den Rückgabetyp virtuell halten.
 
-WARNING: Die Definition einer Factory Methode von Gamma et al. unterscheidet sich von der praktischen Verwendung in anderen Programmiersprachen. 
-Ich verwende diese Definition idR. nicht.
-Siehe auch Factory-Function.
+WARNING: Die Definition einer Factory Methode von Gamma et al. unterscheidet sich von der praktischen Verwendung in anderen Programmiersprachen, die viel häufiger in einem statischen Kontext anzutreffen sind und in der Definition von Gamma et al. nur künstlich vom Builder-Pattern zu unterscheiden ist.
+Siehe auch Factory-Function für eine bessere Definition.
 
 
 
@@ -102,7 +102,7 @@ Verwende in anderen Sprachen die übliche Konstruktor-Deklaration stattdessen.
 
 ==== Builder
 
-Das Builder-Pattern von Gama et al. (siehe <<gof>> S.102) erscheint zum Einen unnötig komplex und übersieht meines Erachtens die eigentlichen Mehrwerte und die abgrenzenden Vorteile von den Definitionen der _Abstract Factory_ und der _Factory Method_.
+Das Builder-Pattern von Gama et al. (siehe <<gof>> S.102) erscheint zum einen unnötig komplex und übersieht zum anderen meines Erachtens die eigentlichen Mehrwerte und die abgrenzenden Vorteile von den Definitionen der _Abstract Factory_ und der _Factory Method_.
 Daher möchte ich auf das _MazeGame_-Beispiel hier nicht besonders eingehen, stattdessen mein Verständnis des Builder-Patterns darlegen.
 
 Ein Builder trennt die Erzeugung einer Instanz von der Instanz selbst, insbesondere um die folgenden Aspekte zu verbessern:
@@ -113,8 +113,8 @@ Ein Builder trennt die Erzeugung einer Instanz von der Instanz selbst, insbesond
 * es kann - muss aber nicht - ein Interface-Typ zurückgegeben werden, um zwischen verschiedenen Implementierungen wechseln zu können
 
 
-TIP: Ein prima Beispiel für das Builder-Pattern ist der link:https://pkg.go.dev/strings#Builder[string.Builder].
-Verwende das Pattern nur, wenn dein Konstruktor zu komplex wird.
+TIP: Ein klassisches Beispiel für das Builder-Pattern ist der link:https://pkg.go.dev/strings#Builder[string.Builder].
+Verwende das Pattern, wenn dein Konstruktor zu komplex wird.
 
 
 ==== Abstract Factory
@@ -158,6 +158,73 @@ Hier wird das Singleton-Pattern sinnvoll genutzt:
 WARNING: Anti-Pattern. Die Verwendung des Singleton-Musters ist eigentlich immer ein Fehler.
 Wenn du es verwendest, dann nur für immutable (Value-)Types.
 
+=== Go Patterns
+
+Bestimmte Muster sind sehr typisch für die Sprache Go und eher selten in anderen Sprachen so zu finden.
+
+==== Accept interfaces, return structs
+
+Ein Interface in Go funktioniert anders als anderen Sprachen und wird eher als Beschreibung für ein Verhalten aufgefasst.
+Das ist auch die Begründung, warum man in Go zwischen Datentypen (Struct mit Feldern) und Interfaces (nur Methoden) unterschiedet und Felder nicht Bestandteil von Interfaces sind.
+In anderen Sprachen dient es häufig eher dazu einem abstrakten Vertrag jeglicher Art zu entsprechen.
+In Go sollte ein Modul bzw. ein Stück Code immer seine eigenes Interfaces - also das Verhalten was es erwartet - definieren.
+Die Vorteile davon sind erheblich:
+
+* Die Interfaces werden kleiner, da ein Konsument nur das definiert, was er gerade benötigt. In Go bestehen die besten Interfaces aus nur einer Methode.
+* häufig kann eine Kopplung auf einen _Shared Kernel_ mit gemeinsamen Interface-Deklarationen verzichtet werden. Dies verbessert die Wiederverwendbarkeit und reduziert die Kopplung zu nicht beteiligten anderen Interfaces und Datenmodellen.
+
+Wenn man ein Struct zurückliefert, also einen nicht-virtuellen Typ, erleichtert und verbessert dies die Optimierungen, die ein Compiler vornehmen kann.
+In der Java-Welt werden konkrete Typen häufig als Anti-Pattern wahrgenommen, in der Praxis macht die unreflektierte Implementierung gegen Interfaces allerdings häufig keinen Sinn, da hier nur ohne nachweislichen Nutzen Quelltext produziert wird, der die Lesbarkeit einschränkt (vgl. link:https://github.com/EnterpriseQualityCoding/FizzBuzzEnterpriseEdition[Java EE FizzBuzz]).
+Eine gut gelebte Softwarearchitektur vermeidet ebenso die Degeneration mit konkreten Typen bei entsprechend hoher konkreter Aussagekraft.
+
+
+
+
+.Beispiel von Accept interfaces, return structs am Beispiel einer Dependency Injection. So kann jeder Entwickler, der das Greet-Modul verwendet nach Belieben eigene Structs erstellen (z.B. Dog, Car, Company), die alle automatisch das Interface _Nameable_ erfüllen und mit dem Gretter kompatibel sind.
+[source,go]
+----
+package main
+
+type Person struct{
+    Name, Firstname string
+}
+
+func (p Person)Name()string{
+    return p.name
+}
+
+type Cat struct {
+    Name string
+}
+
+func (p Cat)Name()string{
+    return p.name
+}
+
+type Nameable interface{
+    Name()string
+}
+
+type Greeter struct{
+    nameable Nameable
+}
+
+func (g Greeter)Greet(){
+    println("hello "+g.nameable.Name())
+}
+
+func NewGreeter(nameable Nameable)Greeter{
+    return Greeter{nameable:nameable}
+}
+
+
+func main(){
+    person := Person{Name:"Torben"}
+    cat := Cat{Name:"Simba"}
+    NewGreeter(person).Greet()
+    NewGreeter(cat).Greet()
+}
+----
 
 
 [bibliography]
