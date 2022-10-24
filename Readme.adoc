@@ -1,0 +1,168 @@
+= Einführung ins Programmieren
+Torben Schinke
+v0.0.1, 2022-10-24
+:doctype: book
+:toc: 
+
+== Einführung
+
+Dieses Werk richtet sich an Lerner, die in die Softwareentwicklung einsteigen möchten.
+In Analogie zum schulischen Sprachunterricht, besteht auch das Erlernen von Programmieren aus verschiedenen Kompetenzbereichen.
+Maßgeblich lassen sich die Kompetenzen wie folgt aufteilen.
+
+=== Grammatik
+
+In der Schuldidaktik gibt es immer wieder Unterrichtsphasen, die die Form und Funktion einer natürlichen Sprache lehren.
+Vergleichbar dazu ist die jeweilige Sprachspezifikation einer konkreten Programmiersprache.
+Diese unterscheiden sich in Umfang und Bedeutung zwischen den Sprachen erheblich, genauso wie die Grammatiken zwischen English, Französisch oder Deutsch.
+Vergleichbar sind zudem auch Grammatiken von Programmiersprachen, die sich Ursprünge und Einflüsse teilen und gemeinsame Charakteristiken aufweisen können.
+So wurde die Sprache _Go_ beispielsweise u.a. durch Pascal und C beeinflusst.
+
+=== Muster
+
+Neben der Grammatik wird in der Schuldidaktik auch das Schreiben verschiedener Textformen, von Briefen, Berichten bis hin zu Aufsätzen jahrelang geübt.
+Der Sinn dieses Einübens erschließt sich dem Schüler üblicherweise nicht, befähigt es ihn doch im Alltag jetzt und später sich in den Texten anderer unmittelbar zurecht zu finden.
+Ebendieses Lesen wird jeden üblicherweise viel häufiger treffen, als das produzieren von Texten.
+Dies lässt sich ebenfalls auf das Programmieren übertragen, auch hier verbringt ein Entwickler üblicherweise viel mehr Zeit damit anderer Leute Quelltext zu lesen und zu verstehen.
+Lilienthal unterstellt, dass ein Entwickler ca. 30.000 Zeilen Quellcode überblicken kann (vgl. <<lilienthal>> S. 11) und dabei die Konsequenzen einer Änderungen vorhersehen kann.
+Diese Einschätzung möchte ich teilen.
+Heute übliche Softwaresysteme enthalten schnell mehrere 100 Millionen Zeilen Quellcode, die ein einzelner Mensch in seiner verbliebenen Lebenszeit nicht einmal mehr lesen könnte.
+Lilienthal verweist hier auf die drei strukturbildenden Prozesse der kognitiven Psychologie, die mir sehr passend erscheinen (vgl. <<lilienthal>> S. 72).
+Die Anwendung von _Chunking_, _Aufbau von Schemata_ sowie der _Bildung von Hierarchien_ erscheint geradezu notwendig, um ein erfolgreicher Programmierer zu sein.
+
+=== "Programmieren kann jeder"
+
+Genauso wie _jeder_ in seiner natürlichen Sprache schreiben kann, kann gewissermaßen also auch jeder programmieren.
+Dennoch befähigt es nicht jeden, einen wissenschaftlichen Aufsatz zu schreiben, der einer Überprüfung standhalten würde.
+Genauso verhält es sich mit dem Programmieren, bei dem weit mehr nötig ist, als die Fähigkeit eine Tastatur zu bedienen:
+
+* Verständnis der Fachlichkeit
+* Beherrschung der Sprache, der zugehörigen Werkzeuge und üblicher Bibliotheken Dritter
+* Anwendung allgemein gültiger Muster, vom kleinen Entwurfsmustern bis hin zu Architekturstilen
+
+Bis auf bestimmte Ausnahmen handelt es sich bei Software zudem üblicherweise um ein evolutionäres Produkt, dass aus zweierlei Sicht fortwährend altert.
+Klassischerweise verändern sich Programmiersprachen, ähnlich wie ihre natürlich-sprachlichen Zwillinge, gemäß den Erfordnissen des aktuellen Zeitgeistes mit der Konsequenz, dass sich syntaktische und semantische Eigenschaften der Sprache oder abhängigiger Module Dritter in inkompatibler Weise ändern.
+Viel häufiger noch ändern sich jedoch die Anwendungsfälle der Nutzer:innen, die bei Änderungen ganze Architekturen ad absurdum führen können und selbst in unaufälligen Ergänzungen aber zumindest eine fortwährende Architekturerosion herbeiführen.
+
+
+== Entwurfsmuster
+
+In diesem Kapitel werden die wichtigsten Entwurfsmuster und Varianten vorgestellt.
+
+=== Creational Patterns
+
+Alle Creational Patterns dienen der Erzeugung von Struct- oder Object-Instanzen.
+Je nach Problemzerlegung, kann ein bestimmtes Muster Vor- und Nachteil haben.
+
+==== Factory Method
+
+Beachte, dass Gamma et al. (siehe <<gof>> S.107) eine sehr spezifische Sicht auf eine Factory-Funktion haben. 
+Diese ist insbesondere dadurch belastet, dass die Autoren dies immer vollständig einem Objekt zuordnen und zusätzlich den Rückgabetyp virtuell halten.
+
+WARNING: Die Definition einer Factory Methode von Gamma et al. unterscheidet sich von der praktischen Verwendung in anderen Programmiersprachen. 
+Ich verwende diese Definition idR. nicht.
+Siehe auch Factory-Function.
+
+
+
+==== Factory-Function
+
+Für mich sind Factory-Funktionen und Konstruktoren fast das gleiche.
+Ein Konstruktor hat hingegen die Einschränkung, dass er in gängigen Programmiersprachen in jedem Fall die Erzeugung und Allozierung einer neuen Instanz zur Folge hat, was bei einer Factory-Funktion nicht der Fall sein muss (Stichwort _Singleton_).
+Ferner kann eine Factory-Funktion die Aufgabe von _Information hiding_ übernehmen und die konkrete Instanz geheimhalten und so auch häufig den Einsatz von anderen GoF _Creational Patterns_ in der Praxis überflüssig machen.
+
+
+.Beispiel Factory-Function in Go. Da die Sprache keine Konstruktoren kennt, können wir sonst keine obligatorischen Argumente ausdrücken.
+[source,go]
+----
+package main
+
+type Person struct{
+    Name, Firstname string
+}
+
+func NewPerson(name,firstname string)*Person{
+    if name == "" || firstname == ""{
+        panic("illegal state")
+    }
+
+    return &Person{Name:name,Firstname:firstname}
+}
+
+func main(){
+    person1 := &Person{} // Attribute entsprechen jeweils dem zero-value
+    person2 := NewPerson("Torben","Schinke") // Validierung möglich
+    
+}
+----
+
+TIP: In Go ist die Verwendung von Factory-Funktionen mit dem Prefix _New_<Typename> best-practice und du solltest es grundsätzlich immer benutzen.
+Verwende in anderen Sprachen die übliche Konstruktor-Deklaration stattdessen.
+
+
+==== Builder
+
+Das Builder-Pattern von Gama et al. (siehe <<gof>> S.102) erscheint zum Einen unnötig komplex und übersieht meines Erachtens die eigentlichen Mehrwerte und die abgrenzenden Vorteile von den Definitionen der _Abstract Factory_ und der _Factory Method_.
+Daher möchte ich auf das _MazeGame_-Beispiel hier nicht besonders eingehen, stattdessen mein Verständnis des Builder-Patterns darlegen.
+
+Ein Builder trennt die Erzeugung einer Instanz von der Instanz selbst, insbesondere um die folgenden Aspekte zu verbessern:
+
+* Ausdruck von optionalen Parametern
+* Validierung komplexer Parameterisierungen
+* Bereistellen einer typsicheren Builder-DSL
+* es kann - muss aber nicht - ein Interface-Typ zurückgegeben werden, um zwischen verschiedenen Implementierungen wechseln zu können
+
+
+TIP: Ein prima Beispiel für das Builder-Pattern ist der link:https://pkg.go.dev/strings#Builder[string.Builder].
+Verwende das Pattern nur, wenn dein Konstruktor zu komplex wird.
+
+
+==== Abstract Factory
+
+Die Idee hierbei ist, dass die Erzeugung von Komponenten vollständig durch eine Factory-Klasse übernommen wird und weder die konkreten Konstruktoren noch Typen bekannt sind.
+Gamma et al. (siehe <<gof>> S.87) führen hierfür das Beispiel einer WidgetFactory für verschiedene Look-and-feels an.
+Das hier vorgestellte Beispiel zeigt sehr schön, wie die zugehörige Degeneration und Verklausulierung des entsprechenden Quellcodes aussehen würde.
+Ein entsprechender UI-Code müsste fortwährend eine WidgetFactory übergeben bekommen, um seinen Widget-Tree zu erzeugen.
+Hier haben sich stattdessen zwei alternative Muster in der Praxis bewährt:
+
+* Context-Injection: Ein Beispiel hierfür ist die Verwendung eines Context-Objektes, dass mit den Style-Informationen verknüft ist, sehr populär im klassischen Android-Widget System, siehe z.B. link:https://developer.android.com/reference/android/widget/TextView#TextView(android.content.Context)[TextView].
+* Value-Modelle oder DSL (domain specific languages): Beispiele hierfür sind die deklarativen Ansätze von link:https://developer.apple.com/xcode/swiftui/[SwiftUI] oder link:https://developer.android.com/jetpack/compose[Jetpack Compose].
+Alle konkreten Rendering-Klassen sind hierbei vollständig entkoppelt, wodurch die Wartbarkeit erheblich steigt und das Rendering-System dahinter ganz andere Optimierung ermöglicht.
+
+WARNING: Anti-Pattern. In Praxis ist mir das Muster bisher nur negativ aufgefallen.
+Andere Lösungen waren immer besser, verwende das Pattern besser nicht - egal in welcher Sprache.
+
+
+==== Singleton
+
+Ein Singleton stellt sicher, dass es prozessweit nur eine Instanz geben kann, die alle benutzen müssen.
+Warum dieses Muster als empfehlenswert von Gamma et al. vorgestellt wird, ist für mich nicht nachvollziehbar, da die Nachteile extrem gravierend sind:
+
+* Ein Singleton stellt nichts anderes dar, als strukturierte globale Variablen.
+* Globale Variablen lassen sich nur schwer testen und überhaupt nicht in parallelisierten Tests.
+* Die Verwendung eines Singletons ist meist der Grundstein für später kaum auflösbare technischer Schulden. 
+* Die Kopplung an Singletons ist nur schwer zu sehen, da die Abhängigkeit idR. nicht injiziert wird.
+* Einbindung in fremde Lifecycles ist gefährlich und verursacht häufig Resource-Leaks oder ungültige Zustände. Stelle dir mehrere Fragments vor, die den link:https://basaransuleyman.medium.com/android-activity-lifecycle-and-fragment-lifecycle-states-and-method-descriptions-136efc3c2ff3[Android Fragment Lifecycle] durchlaufen und versuchen ihren Zustand über ein Singleton abzugleichen.
+
+Heutige Systeme verwenden dieses Pattern kaum mehr:
+
+* OpenGL bindet seinen Context implizit an Thread-Local Variablen. 
+Vulkan gibt dies zugunsten von Handles auf.
+* Go bietet gar keine ThreadLocals. Stattdessen wird ein link:https://pkg.go.dev/context[Context-Type] weitergereicht.
+
+Hier wird das Singleton-Pattern sinnvoll genutzt:
+
+* In Go und Java werden z.T. Heap-Allocations von geboxten Integers oder Floats vermieden.
+* Die Nachteile des Singletons werden allerdings durch den Value-Charakter vermieden.
+
+WARNING: Anti-Pattern. Die Verwendung des Singleton-Musters ist eigentlich immer ein Fehler.
+Wenn du es verwendest, dann nur für immutable (Value-)Types.
+
+
+
+[bibliography]
+== Literatur
+
+* [[[lilienthal]]] Carola Lilienthal. Langlebige Softwarearchitekturen - Technische Schulden analysieren, begrenzen und abbauen. dpunkt.Verlag, 3. Auflage 2020.
+* [[[gof]]] Erich Gamma, Richard Helm, Ralph Johnson & John Vlissides.
+Design Patterns: Elements of Reusable Object-Oriented Software. Addison-Wesley. 1994.
