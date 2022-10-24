@@ -102,14 +102,14 @@ Verwende in anderen Sprachen die übliche Konstruktor-Deklaration stattdessen.
 
 ==== Builder
 
-Das Builder-Pattern von Gama et al. (siehe <<gof>> S.102) erscheint zum einen unnötig komplex und übersieht zum anderen meines Erachtens die eigentlichen Mehrwerte und die abgrenzenden Vorteile von den Definitionen der _Abstract Factory_ und der _Factory Method_.
+Das Builder-Pattern von Gamma et al. (siehe <<gof>> S.102) erscheint zum einen unnötig komplex und übersieht zum anderen meines Erachtens die eigentlichen Mehrwerte und die abgrenzenden Vorteile von den Definitionen der _Abstract Factory_ und der _Factory Method_.
 Daher möchte ich auf das _MazeGame_-Beispiel hier nicht besonders eingehen, stattdessen mein Verständnis des Builder-Patterns darlegen.
 
 Ein Builder trennt die Erzeugung einer Instanz von der Instanz selbst, insbesondere um die folgenden Aspekte zu verbessern:
 
 * Ausdruck von optionalen Parametern
 * Validierung komplexer Parameterisierungen
-* Bereistellen einer typsicheren Builder-DSL
+* Bereitstellen einer typsicheren Builder-DSL
 * es kann - muss aber nicht - ein Interface-Typ zurückgegeben werden, um zwischen verschiedenen Implementierungen wechseln zu können
 
 
@@ -129,7 +129,7 @@ Hier haben sich stattdessen zwei alternative Muster in der Praxis bewährt:
 * Value-Modelle oder DSL (domain specific languages): Beispiele hierfür sind die deklarativen Ansätze von link:https://developer.apple.com/xcode/swiftui/[SwiftUI] oder link:https://developer.android.com/jetpack/compose[Jetpack Compose].
 Alle konkreten Rendering-Klassen sind hierbei vollständig entkoppelt, wodurch die Wartbarkeit erheblich steigt und das Rendering-System dahinter ganz andere Optimierung ermöglicht.
 
-WARNING: Anti-Pattern. In Praxis ist mir das Muster bisher nur negativ aufgefallen.
+WARNING: Anti-Pattern. In der Praxis ist mir das Muster bisher nur negativ aufgefallen.
 Andere Lösungen waren immer besser, verwende das Pattern besser nicht - egal in welcher Sprache.
 
 
@@ -153,7 +153,7 @@ Vulkan gibt dies zugunsten von Handles auf.
 Hier wird das Singleton-Pattern sinnvoll genutzt:
 
 * In Go und Java werden z.T. Heap-Allocations von geboxten Integers oder Floats vermieden.
-* Die Nachteile des Singletons werden allerdings durch den Value-Charakter vermieden.
+* Die Nachteile des Singletons werden dabei aber auch durch den (immutable) Value-Charakter vermieden.
 
 WARNING: Anti-Pattern. Die Verwendung des Singleton-Musters ist eigentlich immer ein Fehler.
 Wenn du es verwendest, dann nur für immutable (Value-)Types.
@@ -180,7 +180,7 @@ Eine gut gelebte Softwarearchitektur hat kein wesentliches Problem mit der Degen
 
 
 
-.Beispiel von Accept interfaces, return structs am Beispiel einer Dependency Injection. So kann jeder Entwickler, der das Greet-Modul verwendet nach Belieben eigene Structs erstellen (z.B. Dog, Car, Company), die alle automatisch das Interface _Nameable_ erfüllen und mit dem Gretter kompatibel sind.
+._Accept interfaces, return structs_ am Beispiel einer Dependency Injection. So kann jeder Entwickler, der das Greet-Modul verwendet nach Belieben eigene Structs erstellen (z.B. Dog, Car, Company), die alle automatisch das Interface _Nameable_ erfüllen und mit dem Gretter kompatibel sind.
 [source,go]
 ----
 package main
