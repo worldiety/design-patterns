@@ -164,9 +164,9 @@ Bestimmte Muster sind sehr typisch für die Sprache Go und eher selten in andere
 
 ==== Accept interfaces, return structs
 
-Ein Interface in Go funktioniert anders als anderen Sprachen und wird eher als Beschreibung für ein Verhalten aufgefasst.
+Ein Interface in Go funktioniert anders als in anderen Sprachen und wird eher als Beschreibung für ein Verhalten aufgefasst.
 Das ist auch die Begründung, warum man in Go zwischen Datentypen (Struct mit Feldern) und Interfaces (nur Methoden) unterschiedet und Felder nicht Bestandteil von Interfaces sind.
-In anderen Sprachen dient es häufig eher dazu einem abstrakten Vertrag jeglicher Art zu entsprechen.
+In anderen Sprachen dient es häufig eher dazu, einem abstrakten Vertrag jeglicher Art zu entsprechen.
 In Go sollte ein Modul bzw. ein Stück Code immer seine eigenes Interfaces - also das Verhalten was es erwartet - definieren.
 Die Vorteile davon sind erheblich:
 
@@ -174,8 +174,8 @@ Die Vorteile davon sind erheblich:
 * häufig kann eine Kopplung auf einen _Shared Kernel_ mit gemeinsamen Interface-Deklarationen verzichtet werden. Dies verbessert die Wiederverwendbarkeit und reduziert die Kopplung zu nicht beteiligten anderen Interfaces und Datenmodellen.
 
 Wenn man ein Struct zurückliefert, also einen nicht-virtuellen Typ, erleichtert und verbessert dies die Optimierungen, die ein Compiler vornehmen kann.
-In der Java-Welt werden konkrete Typen häufig als Anti-Pattern wahrgenommen, in der Praxis macht die unreflektierte Implementierung gegen Interfaces allerdings häufig keinen Sinn, da hier nur ohne nachweislichen Nutzen Quelltext produziert wird, der die Lesbarkeit einschränkt (vgl. link:https://github.com/EnterpriseQualityCoding/FizzBuzzEnterpriseEdition[Java EE FizzBuzz]).
-Eine gut gelebte Softwarearchitektur vermeidet ebenso die Degeneration mit konkreten Typen bei entsprechend hoher konkreter Aussagekraft.
+In der Java-Welt werden konkrete Typen häufig als Anti-Pattern wahrgenommen, in der Praxis macht die unreflektierte Implementierung gegen Interfaces allerdings häufig keinen Sinn, da hier nur ohne nachweislichen Nutzen Quelltext produziert wird, der die Lesbarkeit einschränkt (vgl. das scherzhafte aber irgendwie doch wahre link:https://github.com/EnterpriseQualityCoding/FizzBuzzEnterpriseEdition[Java EE FizzBuzz]).
+Eine gut gelebte Softwarearchitektur hat kein wesentliches Problem mit der Degeneration durch die Verwendung konkreter Typen. Stattdessen profitiert sie von der hohen konkreten Aussagekraft.
 
 
 
