@@ -53,7 +53,7 @@ In diesem Kapitel werden die wichtigsten Entwurfsmuster und Varianten vorgestell
 === Creational Patterns
 
 Alle Creational Patterns dienen der Erzeugung von Struct- oder Object-Instanzen.
-Je nach Problemzerlegung, kann ein bestimmtes Muster Vor- und Nachteil haben.
+Je nach Problemzerlegung, kann ein bestimmtes Muster Vor- und Nachteile haben.
 
 ==== Factory Method
 
